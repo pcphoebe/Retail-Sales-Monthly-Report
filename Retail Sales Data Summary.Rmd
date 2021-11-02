@@ -1,0 +1,178 @@
+---
+title: "Retail Transactions:  Extensions and Opportunities"
+author: "Phoebe (Chi-Hsin) Chen"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Part 1:  Summary {.tabset}
+
+This part of the report will be directed to your internal team at the consulting company.  It is intended to document the sources of information that were used in the project.  It will also describe the data in less technical terms to team members who are not data scientists.  If another member of the team joins the project later, they will rely on your descriptions to gain familiarity with the data.  To that end, we recommend providing some instructions that will help other consultants use the information more effectively.
+
+### Customers
+
+The Customers table contains customer information including customer ID, age, gender, income, and region. There are 100,000 customers, each with a unique ID. Customers are split into 4 regions: Northeast, Midwest, South, and West. Customer ages range from 18 to 65, and income ranges from $15,000 to $441,000.
+```{r customers_1}
+library(data.table)
+customers <- fread(input = "customers.csv")
+colnames(customers)
+head(customers)
+
+```
+
+```{r customers_2}
+customers[, .('Total Customers' = length(unique(customers$customer_id)))]
+```
+
+```{r customers_3}
+customers[, .('Regions' = unique(customers$region))]
+
+```
+
+```{r customers_4}
+summary(customers)
+
+```
+### Products
+The products table contains product-related information, including product category, product ID, and product price. There are 8637 products total split into  5 categories: shoes, pants, shirt, coat, and hat. Product prices range from $13.99 to $368.24. 
+
+```{r products_1}
+products <- fread(input = "products.csv")
+head(products)
+
+```
+```{r products_2}
+summary(products)
+
+```
+
+```{r products_3}
+products[, .('Product Categories' = unique(products$category))]
+```
+### Views
+The views table shows specific times when customers visited a product page. This table includes the customer ID, product ID, and time stamp. In January 2020, there 4,474,131 views total, out of which 67,345 customers viewed 8637 product pages. 
+
+```{r views_1}
+views_jan <- fread(input = "views -- January 2020.csv")
+head(views_jan)
+```
+
+```{r views_2}
+views_jan[, .('Total Views' = .N, 'Total Customers' = length(unique(views_jan$customer_id)), 'Total Products Viewed' = length(unique(views_jan$product_id)))]
+```
+
+### Transactions
+The transactions table contains information on each product purchase, including the customer ID, product ID, product price, quantity purchased, and time of purchase. In January 2020, there were 119,287 transactions total that sold 212,488 products. These transactions resulted in a total revenue of $17,480,031 in January 2020. 
+
+```{r transactions_1}
+transactions_jan <- fread(input = "transactions -- January 2020.csv")
+head(transactions_jan)
+```
+
+```{r transactions_2}
+transactions_jan[, revenue := (price * quantity)]
+transactions_jan[, .('Total Transactions' = .N, 'Total Product Sold' = sum(quantity), 'Total Revenue' = sum(revenue))]
+```
+
+
+## Part 3:  Generalization {.tabset}
+
+This part of the report will be directed internally to your team's engagement manager.  The idea is to present these approaches to your team.  The work will then be conveyed to the client's technical team and middle managers who are working closely with you on the project.  Plan your communication accordingly.
+
+### Q1 
+
+#### Question
+
+Did you see any problems with the data set?  If so, whom would you report them to, and what would you do to address them?  What would be different about the next version of the data?
+
+#### Answer
+
+The first problem I noticed was that in both the transactions and views data set, February 1st transactions and views were included in the January data set. We should report this problem to the data engineers who collect and split the monthly data. In future versions, January data sets should only include data from January 1 to January 31.
+
+Another clarification to ask the client is the way regions are split. Customer locations are currently only split into 4 regions: Northeast, Midwest, South, and West. Clarification is needed on what areas specifically these four regions cover. For example, are there no customers located on the East coast or are East coast customers counted towards the Northeast or South regions. 
+
+### Q2
+
+#### Question
+
+Now generate a version of the same report using the data on views and transactions from the month of February 2020.
+
+In building this report, do not create a new RMarkdown file.  Instead, build a small .R file that allows the user to specify some parameters (e.g. the names of the files).  Then use the **render** function in the **rmarkdown** library to run the report.  Supply these new parameters as a list object in the **params** input.  Then you can make use of these parameters within the RMarkdown file.  For instance, if your file name is **"views -- January 2020.csv"** and it is stored as params\$views.file, then you can read the data with **fread(input = params\$views.file)**
+
+Use the **dir.create** function to build new subfolders to store each month's report.  Specify a name for the output file when calling the **render** function.  Use this method to generate the separate reports for January and February.
+
+Briefly describe your process for implementing this automated approach.  What work would a non-technical user need to perform to run this script without your involvement?
+
+
+#### Answer
+
+This implementation takes user-specified dates and file names. The dates are used to create and name sub-folders by the corresponding month, and file names are parsed through as parameters to the R-Markdown file where the report is generated. 
+
+A non-technical user would need to update three groups of variables to run the script. Firstly, the user needs to update the beginning and end dates of the month with the YYYY-MM-DD format in the first two lines of the script. Secondly, the file names for the customer, products, monthly views, monthly transactions need to be updated to the corresponding files for the month in lines 3-6. Lastly, the output file name needs to be updated in line 7 so the output file is named to the correct date as well. Once these variables have been updated, the script can be ran to generate the sales report for the month.
+
+### Q3
+
+#### Question
+
+What are the advantages of creating an automated approach to routine reporting?
+
+#### Answer
+
+Creating an automated approach to routine reporting has many advantages. Firstly, doing so greatly increases our efficiency as we no longer need to rebuild or edit code every month to generate the report. With this approach, it only takes a few seconds to update the dates and file names to create a report. Next, if there are any edits we need to make to past reports, such as new metrics the client wants to see, we only need to edit the code once and the change will be implemented on all reports. Lastly, an automated approach to routine reporting is a long-term solution for the client. When our collaboration with the client ends, they can continue to build these reports without our help.
+
+
+## Part 4:  Opportunities {.tabset}
+
+This part of the report will be directed externally to your client's senior leadership.  Your work will help to determine the future direction of the project and the company's contract with this client.  Plan your communication accordingly.
+
+### Q1
+
+#### Question
+
+How would you build on the reporting capabilities that you have created?  What would you design next?
+
+#### Answer
+
+We have currently created a report that anyone on the team with or without coding background can easily generate a new report for monthly sales data within minutes. For next steps, not only can we continue to incorporate more metrics into the current report, but we can also design similar auto-reports for quarterly and annual data to provide bigger-picture insights. 
+
+Furthermore, my team and I can create a dashboard to create a visual representation of these reports. Instead of the simple tables displayed in the current reports, a visual representation such as graphs and bar charts may help you and your team understand the data and insights better. Additionally, a dashboard can be created to compare multiple reports (i.e. data across months). A comparison would be greatly valuable in identifying any significant changes in consumer behavior and product sales performance.  
+
+### Q2
+
+#### Question
+
+What are some opportunities to learn valuable information and inform strategic decisions?  List a number of questions that you might explore.
+
+#### Answer
+
+The current report provides a comprehensive set of descriptive monthly sales insights including views and revenue per product category, customer spending statistics based on age and gender segmentation, correlation between number of product views and spending etc. However, there are still opportunities to extract valuable information. Below are a list of questions we may continue to explore:
+
+1. Are revenue per product and category increasing or decreasing?
+      + As mentioned above, a comparison across months would provide valuable insights into product performance changes. 
+2. Is customer spending increasing or decreasing?
+      + As mentioned above, identifying changes in customer spending can help your team better understand changes in customer purchasing habits. This metric can be segmented by customer gender, income, and region to provide more detailed insights.
+3. What are the best selling products per category?
+      + This metric can be used to decide which products should be increased in production.
+4. What are the mean, median, and standard deviation of customer spending based on income and region? 
+      + This metric can be used in deciding shipping and inventory arrangements in stores across the country.
+
+
+### Q3
+
+#### Question
+
+How would you approach other decisionmakers within the client's organization to assess their priorities and help them better utilize the available information?
+
+
+#### Answer
+
+The current monthly report generates valuable insights that can be utilized by other decisionmakers in your firm as well, such as the Chief Marketing Officer, Chief Data Officer, Chief Operating Officer etc. To better assess their priorities, I will first study their department reports before approaching their teams to identify any challenges they are currently facing and data metrics they require. 
+
+Before providing them with the report, I would also explain how the report may be helpful to them. For example, if the Marketing team realizes an issue with declining product views, our report can help better understand the situation and identify which products is seeing this problem and which customer segment are viewing less products. The COO may also utilize metrics such as best performing products and best-selling regions to optimize product delivery and inventory levels.
+
+### Q4
+
+**Video Submission**:  Make a 2-minute pitch to the client with a proposal for the next phase of work.  Include in your request a budget, a time frame, and staffing levels.  Explain why this proposal would be valuable for the client and worth the investment in your consulting services.  Please submit this answer as a short video recording. You may use any video recording program you feel comfortable with. The only requirements are that you are visible and audible in the video.  You may also submit a file of slides if that is part of your pitch.
