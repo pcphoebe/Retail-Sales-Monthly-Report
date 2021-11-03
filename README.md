@@ -1,7 +1,8 @@
 # Automated Retail Sales Monthly Report
 
 **Description**
-This was an individual project for the Data Science Consulting class. CSV files on customer demographic data, product data, monthly transaction data, and monthly product views data were given. From that, I created a report that calculated and analyzed certain retail sales metrics. This report was also automated so that with new monthly data, a new report can be generated within seconds. 
+
+This repository was an individual project analyzing monthly sales data for a clothing retailer. CSV files on customer demographic data, product data, monthly transaction data, and monthly product views data were given. From that, I created a report that calculated and analyzed certain retail sales metrics. This report was also automated so that with new monthly data, a new report can be generated within seconds by simplying changing a few lines of code to import the new data. 
 
 **Files**
 1. "Retail Sales Data Summary" R Markdown file that describes the datasets that were given
