@@ -11,3 +11,7 @@ This repository was an individual project analyzing monthly sales data for a clo
 4. "Extensions & Opportunities Report" HTML file: Generated from the output of the "Retail Sales Data Summary" R Markdown file
 5. "January 2020 Monthly Report" HTML file: Generated from the ouptut of the "Monthly Reporting Script" R Markdown file
 6. "February 2020 Monthly Report" HTML file: Automatically generated from "Monthly Reporting Script" and "Monthly Report Rendering Wrapper" files
+
+**Instructions**
+
+To preview the HTML files, please copy and paste the link into: https://htmlpreview.github.io/ .
