@@ -2,7 +2,7 @@
 
 **Description**
 
-This repository was an individual project analyzing monthly sales data for a clothing retailer. CSV files on customer demographic data, product data, monthly transaction data, and monthly product views data were given. From that, I created a report that calculated and analyzed certain retail sales metrics. This report was also automated so that with new monthly data, a new report can be generated within seconds by simplying changing a few lines of code to import the new data. 
+This repository was an individual project analyzing monthly sales data for a clothing retailer. CSV files on customer demographic data, product data, monthly transaction data, and monthly product views data were given. From that, I created a report that calculated and analyzed certain retail sales metrics. This report was also automated so that with new monthly data, a new report can be generated within seconds by simply changing a few lines of code to import the new data. 
 
 **Files**
 1. "Retail Sales Data Summary" R Markdown file: Describes the datasets that were given
